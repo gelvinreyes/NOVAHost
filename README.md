@@ -15,7 +15,7 @@ Eslogan: *Tu negocio, siempre en línea.*
 ## Contacto
 
 - Teléfono: **+502 4752 4869**
-- WhatsApp: **+502 4752 4859**
+- WhatsApp: **+502 4752 4869**
 - Correo: **ventas@novasoft.com.gt**
 - Dominio: **novahost.com.gt**
 

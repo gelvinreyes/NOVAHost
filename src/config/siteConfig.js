@@ -11,8 +11,8 @@ const siteConfig = {
     'Hosting, dominios y correo corporativo para emprendedores, profesionales y pequeñas empresas en Guatemala.',
 
   phone: '+502 4752 4869',
-  whatsapp: '50247524859',
-  whatsappDisplay: '+502 4752 4859',
+  whatsapp: '50247524869',
+  whatsappDisplay: '+502 4752 4869',
   email: 'ventas@novasoft.com.gt',
   address: 'Guatemala',
   city: 'Guatemala C.A.',
