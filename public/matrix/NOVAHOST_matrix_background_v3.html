@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVAHOST — Matrix Background</title>
+  <style>
+    :root {
+      --matrix-blue: #123A73;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #matrix-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+      background: #00030a;
+    }
+
+    #matrix-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(
+          ellipse at center,
+          rgba(5, 25, 60, 0.08) 0%,
+          rgba(0, 0, 0, 0.46) 100%
+        );
+    }
+
+    .site-content {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 40px;
+      color: white;
+      text-align: center;
+    }
+
+    .hero {
+      max-width: 850px;
+      padding: 48px;
+      border: 1px solid rgba(18, 58, 115, 0.28);
+      background: rgba(0, 8, 18, 0.68);
+      backdrop-filter: blur(3px);
+      box-shadow: 0 0 50px rgba(18, 58, 115, 0.10);
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      color: var(--matrix-blue);
+      font-size: clamp(42px, 8vw, 92px);
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 14px rgba(18, 58, 115, 0.55);
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: clamp(17px, 2vw, 23px);
+      color: rgba(255, 255, 255, 0.88);
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="matrix-canvas" aria-hidden="true"></canvas>
+  <div id="matrix-overlay" aria-hidden="true"></div>
+
+  <main class="site-content">
+    <section class="hero">
+      <h1>NOVAHOST</h1>
+      <p>Hosting, tecnología y soluciones digitales.</p>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const canvas = document.getElementById("matrix-canvas");
+      const ctx = canvas.getContext("2d");
+
+      const characters =
+        "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポ" +
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+        ":;<>+-=~*#%$¥";
+
+      let width = 0;
+      let height = 0;
+      let fontSize = 16;
+      let columns = 0;
+      let drops = [];
+      let speeds = [];
+      let lengths = [];
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        width = window.innerWidth;
+        height = window.innerHeight;
+
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        fontSize = width < 600 ? 13 : width < 1000 ? 15 : 17;
+        columns = Math.ceil(width / fontSize);
+
+        drops = new Array(columns);
+        speeds = new Array(columns);
+        lengths = new Array(columns);
+
+        for (let i = 0; i < columns; i++) {
+          drops[i] = Math.random() * (height / fontSize) * -1;
+
+          // 10% de la velocidad de la versión actual.
+          speeds[i] = 0.009 + Math.random() * 0.025;
+
+          lengths[i] = 8 + Math.floor(Math.random() * 24);
+        }
+      }
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 3, 10, 0.055)";
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.font = `${fontSize}px monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+
+        for (let i = 0; i < columns; i++) {
+          const x = i * fontSize + fontSize / 2;
+          const headY = drops[i] * fontSize;
+          const trailLength = lengths[i];
+
+          for (let j = 0; j < trailLength; j++) {
+            const y = headY - j * fontSize;
+
+            if (y < -fontSize || y > height + fontSize) continue;
+
+            let alpha = 1 - j / trailLength;
+            alpha *= 0.72;
+
+            if (j === 0) {
+              ctx.fillStyle = "rgba(115,155,220,0.88)";
+            } else {
+              const a = Math.max(0.025, alpha * 0.72);
+              ctx.fillStyle = `rgba(18, 58, 115, ${a})`;
+            }
+
+            const char =
+              characters[Math.floor(Math.random() * characters.length)];
+
+            ctx.fillText(char, x, y);
+          }
+
+          drops[i] += speeds[i];
+
+          if (headY > height + trailLength * fontSize) {
+            drops[i] =
+              -Math.random() * (height / fontSize) * 0.45 - trailLength;
+
+            speeds[i] = 0.009 + Math.random() * 0.025;
+            lengths[i] = 8 + Math.floor(Math.random() * 24);
+          }
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener("resize", resize, { passive: true });
+
+      resize();
+
+      ctx.fillStyle = "#00030a";
+      ctx.fillRect(0, 0, width, height);
+
+      requestAnimationFrame(draw);
+    })();
+  </script>
+</body>
+</html>
