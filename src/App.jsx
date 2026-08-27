@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import LicenseGate from './components/LicenseGate';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import QuienesSomos from './pages/QuienesSomos';
@@ -21,7 +22,7 @@ function ScrollToTop() {
 
 export default function App() {
   return (
-    <>
+    <LicenseGate>
       <ScrollToTop />
       <Routes>
         <Route element={<Layout />}>
@@ -34,6 +35,6 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
-    </>
+    </LicenseGate>
   );
 }
