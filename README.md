@@ -26,6 +26,18 @@ npm install
 npm run dev
 ```
 
+## Agente IA
+
+El widget de chat llama al backend **AgenteConIA**. No coloques `OPENAI_API_KEY` en este repositorio.
+
+Copia `.env.example` a `.env` para desarrollo:
+
+```
+VITE_AGENT_API_URL=http://localhost:3000/api/chat
+```
+
+En producción, define `VITE_AGENT_API_URL` con la URL pública del endpoint POST (`https://tu-dominio-del-agente/api/chat`) **antes** de `npm run build`. Si no se define, el fallback de desarrollo es `http://localhost:3000/api/chat`.
+
 ## Producción (A2 Hosting)
 
 ```bash

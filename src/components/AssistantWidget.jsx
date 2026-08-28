@@ -1,21 +1,20 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  ASSISTANT_CONFIG,
-  ASSISTANT_MENU_ID,
-  ASSISTANT_WHATSAPP_MESSAGE,
-  getAssistantReply,
-} from '../data/assistant';
+import { ASSISTANT_CONFIG, ASSISTANT_WHATSAPP_MESSAGE, getAgentChatUrl } from '../data/assistant';
 import { getWhatsAppUrl } from '../utils/whatsapp';
+
+const USER_ERROR_MESSAGE = 'No pude conectar con el asistente. Inténtalo de nuevo en un momento.';
 
 export default function AssistantWidget() {
   const [open, setOpen] = useState(false);
-  const [topicId, setTopicId] = useState(ASSISTANT_MENU_ID);
+  const [input, setInput] = useState('');
+  const [sending, setSending] = useState(false);
+  const [messages, setMessages] = useState([
+    { id: 'welcome', role: 'assistant', text: ASSISTANT_CONFIG.welcome },
+  ]);
   const panelId = useId();
   const closeRef = useRef(null);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const reply = getAssistantReply(topicId);
+  const inputRef = useRef(null);
+  const threadRef = useRef(null);
   const whatsappUrl = getWhatsAppUrl(ASSISTANT_WHATSAPP_MESSAGE);
 
   useEffect(() => {
@@ -30,25 +29,64 @@ export default function AssistantWidget() {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const goToDemos = () => {
-    setOpen(false);
-    if (location.pathname === '/') {
-      document.getElementById('demos')?.scrollIntoView({ behavior: 'smooth' });
-      if (window.location.hash !== '#demos') {
-        window.history.replaceState(null, '', '/#demos');
-      }
-      return;
+  useEffect(() => {
+    if (open) {
+      inputRef.current?.focus();
     }
-    navigate('/#demos');
+  }, [open]);
+
+  useEffect(() => {
+    const thread = threadRef.current;
+    if (!thread) return;
+    thread.scrollTop = thread.scrollHeight;
+  }, [messages, sending, open]);
+
+  const sendMessage = async (event) => {
+    event.preventDefault();
+    const text = input.trim();
+    if (!text || sending) return;
+
+    const userMessage = { id: `user-${Date.now()}`, role: 'user', text };
+    setMessages((current) => [...current, userMessage]);
+    setInput('');
+    setSending(true);
+
+    try {
+      const response = await fetch(getAgentChatUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+
+      let data = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+      if (!response.ok || typeof data.response !== 'string' || !data.response.trim()) {
+        throw new Error(data.error || USER_ERROR_MESSAGE);
+      }
+
+      setMessages((current) => [
+        ...current,
+        { id: `assistant-${Date.now()}`, role: 'assistant', text: data.response.trim() },
+      ]);
+    } catch {
+      setMessages((current) => [
+        ...current,
+        { id: `error-${Date.now()}`, role: 'error', text: USER_ERROR_MESSAGE },
+      ]);
+    } finally {
+      setSending(false);
+    }
   };
 
-  const onAction = (action) => {
-    if (action.type === 'topic') {
-      setTopicId(action.id);
-      return;
-    }
-    if (action.type === 'demos') {
-      goToDemos();
+  const onComposerKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      event.currentTarget.form?.requestSubmit();
     }
   };
 
@@ -83,52 +121,61 @@ export default function AssistantWidget() {
             </button>
           </header>
 
-          <div className="assistant-panel__body">
-            <div className="assistant-bubble">
-              <p>{reply.text}</p>
-              {reply.steps?.length ? (
-                <ol className="assistant-steps">
-                  {reply.steps.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              ) : null}
+          <div className="assistant-panel__body" ref={threadRef}>
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`assistant-bubble assistant-bubble--${message.role}`}
+              >
+                <p>{message.text}</p>
+              </div>
+            ))}
+            {sending ? (
+              <div className="assistant-bubble assistant-bubble--assistant" aria-live="polite">
+                <p className="assistant-typing">
+                  <span />
+                  <span />
+                  <span />
+                </p>
+              </div>
+            ) : null}
+          </div>
+
+          <form className="assistant-form" onSubmit={sendMessage}>
+            <label className="assistant-visually-hidden" htmlFor={`${panelId}-input`}>
+              Escribe tu mensaje
+            </label>
+            <textarea
+              id={`${panelId}-input`}
+              ref={inputRef}
+              className="assistant-form__input"
+              rows={2}
+              value={input}
+              disabled={sending}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={onComposerKeyDown}
+              placeholder="Escribe tu pregunta..."
+              maxLength={2000}
+            />
+            <div className="assistant-form__row">
+              <a
+                className="assistant-action assistant-action--whatsapp"
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="bi bi-whatsapp" aria-hidden="true" />
+                WhatsApp
+              </a>
+              <button
+                type="submit"
+                className="assistant-action assistant-action--primary"
+                disabled={sending || !input.trim()}
+              >
+                Enviar
+              </button>
             </div>
-          </div>
-
-          <div className="assistant-panel__actions">
-            {reply.actions.map((action) => {
-              if (action.type === 'whatsapp') {
-                return (
-                  <a
-                    key={action.label}
-                    className="assistant-action assistant-action--whatsapp"
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <i className="bi bi-whatsapp" aria-hidden="true" />
-                    {action.label}
-                  </a>
-                );
-              }
-
-              return (
-                <button
-                  key={action.label}
-                  type="button"
-                  className={
-                    action.type === 'demos'
-                      ? 'assistant-action assistant-action--primary'
-                      : 'assistant-action'
-                  }
-                  onClick={() => onAction(action)}
-                >
-                  {action.label}
-                </button>
-              );
-            })}
-          </div>
+          </form>
         </section>
       ) : null}
 
@@ -138,13 +185,7 @@ export default function AssistantWidget() {
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? 'Cerrar asistente NOVAHost' : 'Abrir asistente NOVAHost'}
-        onClick={() => {
-          setOpen((value) => {
-            const next = !value;
-            if (next) setTopicId(ASSISTANT_MENU_ID);
-            return next;
-          });
-        }}
+        onClick={() => setOpen((value) => !value)}
       >
         <i className={`bi ${open ? 'bi-x-lg' : 'bi-chat-dots-fill'}`} aria-hidden="true" />
       </button>
