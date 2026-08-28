@@ -28,15 +28,13 @@ npm run dev
 
 ## Agente IA
 
-El widget de chat llama al backend **AgenteConIA**. No coloques `OPENAI_API_KEY` en este repositorio.
+El widget llama a `/api/chat` en el mismo dominio (`https://novahost.com.gt/api/chat`). No hace falta `VITE_AGENT_API_URL` en producción si el agente está montado en `/api`.
 
-Copia `.env.example` a `.env` para desarrollo:
+Opcional, para forzar otra URL:
 
 ```
-VITE_AGENT_API_URL=http://localhost:3000/api/chat
+VITE_AGENT_API_URL=https://novahost.com.gt/api/chat
 ```
-
-En producción, define `VITE_AGENT_API_URL` con la URL pública del endpoint POST (`https://tu-dominio-del-agente/api/chat`) **antes** de `npm run build`. Si no se define, el fallback de desarrollo es `http://localhost:3000/api/chat`.
 
 ## Producción (A2 Hosting)
 
