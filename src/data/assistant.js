@@ -13,12 +13,10 @@ export const ASSISTANT_CONFIG = {
     'Hola, soy el asistente virtual de NOVAHost. Pregúntame por el paquete web, correo profesional o un agente de IA.',
 };
 
-const DEV_CHAT_URL = 'http://localhost:3000/api/chat';
-
 export function getAgentChatUrl() {
   const configured = import.meta.env.VITE_AGENT_API_URL;
   if (typeof configured === 'string' && configured.trim()) {
     return configured.trim();
   }
-  return DEV_CHAT_URL;
+  return '/api/chat';
 }
