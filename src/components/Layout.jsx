@@ -4,6 +4,7 @@ import siteConfig from '../config/siteConfig';
 import Header from './Header';
 import Footer from './Footer';
 import WhatsAppButton from './WhatsAppButton';
+import AssistantWidget from './AssistantWidget';
 import MatrixBackground from './MatrixBackground';
 
 export default function Layout() {
@@ -27,6 +28,7 @@ export default function Layout() {
       </main>
       <Footer />
       <WhatsAppButton />
+      <AssistantWidget />
     </>
   );
 }

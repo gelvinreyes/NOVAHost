@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import siteConfig from '../config/siteConfig';
 import Seo from '../components/Seo';
 import Hero from '../components/Hero';
@@ -19,6 +20,15 @@ const marqueeItems = [
 
 export default function Home() {
   const { home, specialties, experience, gallery, hostingHighlights } = siteConfig;
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash !== '#demos') return undefined;
+    const timer = window.setTimeout(() => {
+      document.getElementById('demos')?.scrollIntoView({ behavior: 'smooth' });
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [location.hash, location.pathname]);
 
   return (
     <>
@@ -135,7 +145,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section" id="demos">
         <div className="container-wide">
           <Reveal className="section-heading">
             <p className="eyebrow">{home.galleryEyebrow}</p>

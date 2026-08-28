@@ -68,6 +68,12 @@ export default function Footer() {
           <p>
             Los sitios y contenidos publicados son propiedad única y exclusiva de NOVAHost.
           </p>
+          <p>
+            Creado por{' '}
+            <a href="https://novahost.com.gt" target="_blank" rel="noopener noreferrer">
+              NOVAHost
+            </a>
+          </p>
         </div>
       </div>
     </footer>
