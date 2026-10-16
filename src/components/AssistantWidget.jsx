@@ -5,6 +5,8 @@ import { getApiUrl } from '../utils/api';
 import { trackEvent } from '../utils/analytics';
 
 const USER_ERROR_MESSAGE = 'No pude conectar con el asistente. Inténtalo de nuevo en un momento.';
+const SERVICE_DOWN_MESSAGE =
+  'El asistente no está disponible en este momento (el servicio Node está detenido). Puedes escribirnos por WhatsApp.';
 const SESSION_KEY = 'novahost_assistant_session';
 const INACTIVITY_MS = 15 * 60 * 1000;
 
@@ -122,6 +124,9 @@ export default function AssistantWidget() {
         }),
       });
       const data = await response.json().catch(() => ({}));
+      if (response.status === 503) {
+        throw new Error(SERVICE_DOWN_MESSAGE);
+      }
       if (!response.ok || typeof data.response !== 'string' || !data.response.trim()) {
         throw new Error(data.error || USER_ERROR_MESSAGE);
       }
