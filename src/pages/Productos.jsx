@@ -4,6 +4,7 @@ import Seo from '../components/Seo';
 import PageHero from '../components/PageHero';
 import Reveal from '../components/Reveal';
 import ProductCard from '../components/ProductCard';
+import NovaProductCard from '../components/NovaProductCard';
 import CtaBanner from '../components/CtaBanner';
 
 export default function Productos() {
@@ -66,6 +67,26 @@ export default function Productos() {
                 <ProductCard item={item} ctaLabel="Cotizar" />
               </Reveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section" id="soluciones">
+        <div className="container-wide">
+          <Reveal className="section-heading">
+            <p className="eyebrow">Soluciones NOVA</p>
+            <h2>Herramientas aparte del hosting</h2>
+            <p>NovaFinanzas y NovaFit no están incluidas en el paquete web.</p>
+          </Reveal>
+          <div className="nova-grid">
+            {siteConfig.novaProducts
+              .filter((item) => item.published)
+              .sort((a, b) => a.order - b.order)
+              .map((product) => (
+                <Reveal key={product.slug}>
+                  <NovaProductCard product={product} />
+                </Reveal>
+              ))}
           </div>
         </div>
       </section>

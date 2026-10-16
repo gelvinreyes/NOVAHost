@@ -13,9 +13,27 @@ export default function MatrixBackground() {
     if (!canvas) return undefined;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return undefined;
-
     const ctx = canvas.getContext('2d');
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+    const paintWhite = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+    };
+
+    if (reduced) {
+      paintWhite();
+      return undefined;
+    }
+
     let width = 0;
     let height = 0;
     let fontSize = 16;
@@ -25,9 +43,10 @@ export default function MatrixBackground() {
     let lengths = [];
     let frameId = 0;
     let running = true;
+    let tick = 0;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = Math.floor(width * dpr);
@@ -36,7 +55,7 @@ export default function MatrixBackground() {
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      fontSize = width < 600 ? 13 : width < 1000 ? 15 : 17;
+      fontSize = width < 600 ? 16 : width < 1000 ? 18 : 20;
       columns = Math.ceil(width / fontSize);
       drops = new Array(columns);
       speeds = new Array(columns);
@@ -44,17 +63,23 @@ export default function MatrixBackground() {
 
       for (let i = 0; i < columns; i += 1) {
         drops[i] = Math.random() * (height / fontSize) * -1;
-        speeds[i] = 0.009 + Math.random() * 0.025;
-        lengths[i] = 8 + Math.floor(Math.random() * 24);
+        speeds[i] = 0.008 + Math.random() * 0.02;
+        lengths[i] = 6 + Math.floor(Math.random() * 16);
       }
 
-      ctx.fillStyle = '#00030a';
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, width, height);
     };
 
     const draw = () => {
       if (!running) return;
-      ctx.fillStyle = 'rgba(0, 3, 10, 0.055)';
+      tick += 1;
+      if (isMobile && tick % 2 === 1) {
+        frameId = requestAnimationFrame(draw);
+        return;
+      }
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
       ctx.fillRect(0, 0, width, height);
       ctx.font = `${fontSize}px monospace`;
       ctx.textAlign = 'center';
@@ -69,14 +94,11 @@ export default function MatrixBackground() {
           const y = headY - j * fontSize;
           if (y < -fontSize || y > height + fontSize) continue;
 
-          let alpha = 1 - j / trailLength;
-          alpha *= 0.72;
-
+          const fade = 1 - j / trailLength;
           if (j === 0) {
-            ctx.fillStyle = 'rgba(115,155,220,0.88)';
+            ctx.fillStyle = 'rgba(91, 182, 255, 0.55)';
           } else {
-            const a = Math.max(0.025, alpha * 0.72);
-            ctx.fillStyle = `rgba(18, 58, 115, ${a})`;
+            ctx.fillStyle = `rgba(0, 174, 239, ${Math.max(0.04, fade * 0.28)})`;
           }
 
           ctx.fillText(CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)], x, y);
@@ -86,8 +108,8 @@ export default function MatrixBackground() {
 
         if (headY > height + trailLength * fontSize) {
           drops[i] = -Math.random() * (height / fontSize) * 0.45 - trailLength;
-          speeds[i] = 0.009 + Math.random() * 0.025;
-          lengths[i] = 8 + Math.floor(Math.random() * 24);
+          speeds[i] = 0.008 + Math.random() * 0.02;
+          lengths[i] = 6 + Math.floor(Math.random() * 16);
         }
       }
 

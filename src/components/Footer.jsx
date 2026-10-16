@@ -26,7 +26,7 @@ export default function Footer() {
           <div>
             <h2>Navegación</h2>
             <ul>
-              {siteConfig.navItems.map((item) => (
+              {(siteConfig.footerNavItems || siteConfig.navItems).map((item) => (
                 <li key={item.to}><Link to={item.to}>{item.label}</Link></li>
               ))}
             </ul>

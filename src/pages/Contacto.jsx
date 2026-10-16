@@ -5,6 +5,7 @@ import Reveal from '../components/Reveal';
 import ContactForm from '../components/ContactForm';
 import { getWhatsAppUrl } from '../utils/whatsapp';
 import { telHref, mailHref } from '../utils/format';
+import { trackEvent } from '../utils/analytics';
 
 export default function Contacto() {
   return (
@@ -38,7 +39,12 @@ export default function Contacto() {
               </li>
               <li>
                 <span>WhatsApp</span>
-                <a href={getWhatsAppUrl()} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={getWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent('WhatsAppClick', { place: 'contacto' })}
+                >
                   {siteConfig.whatsappDisplay}
                 </a>
               </li>

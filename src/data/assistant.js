@@ -10,7 +10,7 @@ export const ASSISTANT_CONFIG = {
   title: 'Asistente NOVAHost',
   status: 'En línea',
   welcome:
-    'Hola, soy el asistente virtual de NOVAHost. Pregúntame por el paquete web, correo profesional o un agente de IA.',
+    'Hola, soy el asistente virtual de NOVAHost. ¿Buscas hosting, una página web para tu negocio, organizar tus finanzas personales o llevar el control de tus entrenamientos?',
 };
 
 export function getAgentChatUrl() {

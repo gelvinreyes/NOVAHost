@@ -1,8 +1,21 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { ASSISTANT_CONFIG, ASSISTANT_WHATSAPP_MESSAGE, getAgentChatUrl } from '../data/assistant';
 import { getWhatsAppUrl } from '../utils/whatsapp';
+import { getApiUrl } from '../utils/api';
+import { trackEvent } from '../utils/analytics';
 
 const USER_ERROR_MESSAGE = 'No pude conectar con el asistente. Inténtalo de nuevo en un momento.';
+const SERVICE_DOWN_MESSAGE =
+  'El asistente no está disponible en este momento. Puedes escribirnos por WhatsApp.';
+const SESSION_KEY = 'novahost_assistant_session';
+
+function getSessionId() {
+  const existing = sessionStorage.getItem(SESSION_KEY);
+  if (existing) return existing;
+  const id = crypto.randomUUID();
+  sessionStorage.setItem(SESSION_KEY, id);
+  return id;
+}
 
 export default function AssistantWidget() {
   const [open, setOpen] = useState(false);
@@ -15,7 +28,19 @@ export default function AssistantWidget() {
   const closeRef = useRef(null);
   const inputRef = useRef(null);
   const threadRef = useRef(null);
+  const conversationRef = useRef(null);
   const whatsappUrl = getWhatsAppUrl(ASSISTANT_WHATSAPP_MESSAGE);
+
+  const closeConversation = (reason) => {
+    const id = conversationRef.current;
+    if (!id) return;
+    fetch(getApiUrl('/chat/close'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conversation_id: id, session_id: getSessionId(), reason }),
+      keepalive: true,
+    }).catch(() => {});
+  };
 
   useEffect(() => {
     if (!open) return undefined;
@@ -55,7 +80,11 @@ export default function AssistantWidget() {
       const response = await fetch(getAgentChatUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          session_id: getSessionId(),
+          conversation_id: conversationRef.current,
+        }),
       });
 
       let data = {};
@@ -65,18 +94,21 @@ export default function AssistantWidget() {
         data = {};
       }
 
+      if (response.status === 503) throw new Error(SERVICE_DOWN_MESSAGE);
       if (!response.ok || typeof data.response !== 'string' || !data.response.trim()) {
         throw new Error(data.error || USER_ERROR_MESSAGE);
       }
-
+      if (data.conversation_id) conversationRef.current = data.conversation_id;
+      trackEvent('ChatAttended');
       setMessages((current) => [
         ...current,
         { id: `assistant-${Date.now()}`, role: 'assistant', text: data.response.trim() },
       ]);
-    } catch {
+    } catch (error) {
+      const text = error?.message === SERVICE_DOWN_MESSAGE ? SERVICE_DOWN_MESSAGE : USER_ERROR_MESSAGE;
       setMessages((current) => [
         ...current,
-        { id: `error-${Date.now()}`, role: 'error', text: USER_ERROR_MESSAGE },
+        { id: `error-${Date.now()}`, role: 'error', text },
       ]);
     } finally {
       setSending(false);
@@ -114,7 +146,10 @@ export default function AssistantWidget() {
               ref={closeRef}
               type="button"
               className="assistant-panel__close"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                closeConversation('visitor_closed');
+                setOpen(false);
+              }}
               aria-label="Cerrar asistente"
             >
               <i className="bi bi-x-lg" aria-hidden="true" />
@@ -163,6 +198,7 @@ export default function AssistantWidget() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent('WhatsAppClick', { place: 'chat' })}
               >
                 <i className="bi bi-whatsapp" aria-hidden="true" />
                 WhatsApp
@@ -185,7 +221,13 @@ export default function AssistantWidget() {
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? 'Cerrar asistente NOVAHost' : 'Abrir asistente NOVAHost'}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          setOpen((value) => {
+            const next = !value;
+            if (next) trackEvent('ChatOpen');
+            return next;
+          });
+        }}
       >
         <i className={`bi ${open ? 'bi-x-lg' : 'bi-chat-dots-fill'}`} aria-hidden="true" />
       </button>

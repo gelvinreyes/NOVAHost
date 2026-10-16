@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import siteConfig from '../config/siteConfig';
 import { getWhatsAppUrl } from '../utils/whatsapp';
 import { telHref, mailHref } from '../utils/format';
+import { trackEvent } from '../utils/analytics';
 
 const navItems = siteConfig.navItems;
 
@@ -41,6 +42,7 @@ export default function Header() {
             href={getWhatsAppUrl()}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent('WhatsAppClick', { place: 'header' })}
           >
             <i className="bi bi-whatsapp" aria-hidden="true" />
             <span>WhatsApp: {siteConfig.whatsappDisplay}</span>
@@ -69,22 +71,29 @@ export default function Header() {
 
           <nav id="menu-principal" className={`main-nav ${open ? 'is-open' : ''}`} aria-label="Principal">
             {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/'}
-                className={({ isActive }) => (isActive ? 'is-active' : undefined)}
-                onClick={close}
-              >
-                {item.label}
-              </NavLink>
+              item.to.includes('#') ? (
+                <Link key={item.to} to={item.to} onClick={close}>{item.label}</Link>
+              ) : (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  className={({ isActive }) => (isActive ? 'is-active' : undefined)}
+                  onClick={close}
+                >
+                  {item.label}
+                </NavLink>
+              )
             ))}
             <a
               className="btn btn-gold btn-sm nav-cta"
               href={getWhatsAppUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={close}
+              onClick={() => {
+                trackEvent('WhatsAppClick', { place: 'nav' });
+                close();
+              }}
             >
               {siteConfig.navCtaLabel}
             </a>

@@ -56,21 +56,121 @@ const siteConfig = {
     'Hola NOVAHost, me interesa la solución completa de sitio web, hosting, dominio y correo.',
 
   navItems: [
-    { to: '/', label: 'Inicio' },
-    { to: '/quienes-somos', label: 'Quiénes somos' },
-    { to: '/productos', label: 'Productos' },
-    { to: '/servicios', label: 'Servicios' },
-    { to: '/porque', label: 'Por qué NOVAHost' },
+    { to: '/#hosting', label: 'Hosting' },
+    { to: '/#paginas-web', label: 'Página web' },
+    { to: '/#soluciones', label: 'Soluciones NOVA' },
     { to: '/contacto', label: 'Contacto' },
   ],
-  navCtaLabel: 'Cotizar ahora',
-  heroPrimaryCta: 'Quiero contratar hosting',
-  heroPrimaryLink: '/productos',
+  footerNavItems: [
+    { to: '/', label: 'Inicio' },
+    { to: '/#hosting', label: 'Hosting' },
+    { to: '/#paginas-web', label: 'Página web' },
+    { to: '/quienes-somos', label: 'Quiénes somos' },
+    { to: '/productos', label: 'Productos' },
+    { to: '/contacto', label: 'Contacto' },
+    { to: '/privacidad', label: 'Privacidad' },
+  ],
+  navCtaLabel: 'Cotizar mi página web',
+  heroPrimaryCta: 'Quiero mi página web',
+  heroPrimaryLink: '/#paginas-web',
+  heroTitle: 'Tu negocio merece una presencia digital propia.',
+  heroLead:
+    'Creamos tu página web y te ayudamos a dar el siguiente paso con dominio, hosting y correo profesional en un solo paquete.',
+
+  webOffer: {
+    enabled: true,
+    promoPrice: 599,
+    regularPrice: 1199,
+    startDate: '2026-10-01',
+    endDate: '2026-10-31',
+    headline: 'Página web profesional + hosting + dominio + 1 correo',
+    promoLegal:
+      'Oferta de octubre de 2026. Precio promocional Q599 al año mientras esté vigente. Consulta condiciones al cotizar. No incluye diseño a medida ni NovaFit o NovaFinanzas.',
+    regularLegal:
+      'Precio de referencia Q1,199 al año. Aplican restricciones; confirma vigencia al cotizar. No incluye diseño a medida ni NovaFit o NovaFinanzas.',
+    includes: [
+      'Página web profesional basada en una plantilla',
+      'Hosting para publicar tu sitio',
+      'Dominio para tu marca',
+      '1 correo profesional',
+      'Hasta 12 actualizaciones menores de contenido al año',
+    ],
+  },
+
+  novaProducts: [
+    {
+      slug: 'novafinanzas',
+      name: 'NovaFinanzas Personales',
+      published: true,
+      order: 1,
+      url: 'https://finanzas.novahost.com.gt',
+      cta: 'Conocer NovaFinanzas',
+      image: '/images/nova/novafinanzas-placeholder.svg',
+      imageNote: 'Ilustración conceptual. No es una captura real de la aplicación.',
+      description:
+        'Ten una visión más clara de tu dinero. Organiza tus finanzas personales y toma decisiones con más información desde un solo lugar.',
+      benefits: [
+        'Seguimiento de ingresos, gastos y movimientos',
+        'Presupuesto por categoría con semáforo',
+        'Deudas, metas y recomendaciones de pago',
+      ],
+    },
+    {
+      slug: 'novafit',
+      name: 'NovaFit',
+      published: true,
+      order: 2,
+      url: 'https://fit.novahost.com.gt',
+      cta: 'Conocer NovaFit',
+      image: '/images/nova/novafit-placeholder.svg',
+      imageNote: 'Ilustración conceptual. No es una captura real de la aplicación.',
+      description:
+        'Convierte tus objetivos de entrenamiento en un plan que puedas seguir. Registra tus sesiones y observa tu progreso a tu ritmo.',
+      benefits: [
+        'Registro de entrenamientos y distintas actividades',
+        'Métricas según el tipo de ejercicio',
+        'Seguimiento de progreso, rachas y metas',
+      ],
+    },
+  ],
+
+  howItWorks: [
+    'Cuéntanos qué necesitas.',
+    'Te mostramos la solución que mejor encaja.',
+    'Empiezas con una guía clara para el siguiente paso.',
+  ],
+
+  faqs: [
+    {
+      q: '¿Qué incluye el paquete web?',
+      a: 'Página web profesional basada en plantilla, hosting, dominio y 1 correo profesional, con actualizaciones menores de contenido según el paquete anual.',
+    },
+    {
+      q: '¿El dominio y el correo están incluidos?',
+      a: 'Sí, en el paquete anunciado: 1 dominio y 1 correo profesional, según disponibilidad y condiciones vigentes al contratar.',
+    },
+    {
+      q: '¿Puedo pedir un diseño especial?',
+      a: 'Sí. Un diseño a medida o funciones fuera del paquete básico se cotizan por separado.',
+    },
+    {
+      q: '¿NovaFit o NovaFinanzas vienen con el hosting?',
+      a: 'No. Son productos aparte. NovaFinanzas está en finanzas.novahost.com.gt y NovaFit en fit.novahost.com.gt.',
+    },
+    {
+      q: '¿Puedo hablar con una persona?',
+      a: 'Sí. Escríbenos por WhatsApp al +502 4752 4869 o deja tus datos en el formulario con consentimiento.',
+    },
+  ],
+
+  consentText:
+    'Autorizo a NOVAHost a usar mi nombre y correo para responder esta consulta.',
+  consentVersion: 'v1-2026-10-16',
 
   seo: {
     defaultTitle: 'NOVAHost | Tu negocio, siempre en línea',
     defaultDescription:
-      'NOVAHost ofrece hosting, dominios y correo corporativo para emprendedores y pequeñas empresas en Guatemala. Presencia digital profesional, accesible y con atención cercana.',
+      'Hosting, páginas web y soluciones NOVA para negocios en Guatemala: NovaFinanzas Personales y NovaFit. Presencia digital con atención cercana.',
   },
 
   home: {
@@ -499,7 +599,7 @@ const siteConfig = {
       'Estamos listos para orientarte sobre hosting, correo corporativo, dominios y presencia digital.',
     formTitle: 'Escríbenos',
     formText:
-      'Completa el formulario y el mensaje se abrirá en WhatsApp, listo para enviarnos.',
+      'Completa el formulario. Si el correo no está disponible, puedes continuar por WhatsApp.',
     mapTitle: 'Atención en Guatemala',
     mapText:
       'Atendemos por teléfono, WhatsApp y correo. Escríbenos y te respondemos con claridad.',

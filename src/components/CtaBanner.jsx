@@ -1,4 +1,5 @@
 import { getWhatsAppUrl } from '../utils/whatsapp';
+import { trackEvent } from '../utils/analytics';
 
 export default function CtaBanner({
   title,
@@ -17,6 +18,7 @@ export default function CtaBanner({
           href={getWhatsAppUrl(message)}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackEvent('WhatsAppClick', { place: 'cta' })}
         >
           <i className="bi bi-whatsapp" aria-hidden="true" /> {buttonLabel}
         </a>

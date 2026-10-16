@@ -9,13 +9,14 @@ export function getDishWhatsAppUrl(itemName) {
   return getWhatsAppUrl(`Hola NOVAHost, deseo información sobre:\n${itemName}`);
 }
 
-export function getContactWhatsAppUrl({ name, phone, email, message }) {
+export function getContactWhatsAppUrl({ name, phone, email, message, interest }) {
   const text = [
     siteConfig.whatsappDefaultMessage,
     '',
     `Nombre: ${name}`,
     `Teléfono: ${phone}`,
     `Correo: ${email}`,
+    `Interés: ${interest || ''}`,
     `Mensaje: ${message}`,
   ].join('\n');
 
