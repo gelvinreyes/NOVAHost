@@ -1,13 +1,40 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { ASSISTANT_CONFIG, ASSISTANT_WHATSAPP_MESSAGE, getAgentChatUrl } from '../data/assistant';
+import { ASSISTANT_CONFIG, ASSISTANT_WHATSAPP_MESSAGE } from '../data/assistant';
 import { getWhatsAppUrl } from '../utils/whatsapp';
+import { getApiUrl } from '../utils/api';
+import { trackEvent } from '../utils/analytics';
 
 const USER_ERROR_MESSAGE = 'No pude conectar con el asistente. Inténtalo de nuevo en un momento.';
+const SESSION_KEY = 'novahost_assistant_session';
+const INACTIVITY_MS = 15 * 60 * 1000;
+
+function getSessionId() {
+  const existing = sessionStorage.getItem(SESSION_KEY);
+  if (existing) return existing;
+  const id = crypto.randomUUID();
+  sessionStorage.setItem(SESSION_KEY, id);
+  return id;
+}
+
+function renderText(text) {
+  const parts = String(text).split(/(https?:\/\/[^\s]+)/g);
+  return parts.map((part, index) => {
+    if (/^https?:\/\//.test(part)) {
+      return (
+        <a key={`${part}-${index}`} href={part} target="_blank" rel="noopener noreferrer">
+          {part}
+        </a>
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
+}
 
 export default function AssistantWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
   const [messages, setMessages] = useState([
     { id: 'welcome', role: 'assistant', text: ASSISTANT_CONFIG.welcome },
   ]);
@@ -15,24 +42,44 @@ export default function AssistantWidget() {
   const closeRef = useRef(null);
   const inputRef = useRef(null);
   const threadRef = useRef(null);
+  const inactivityRef = useRef(null);
+  const startedRef = useRef(false);
+  const conversationRef = useRef(null);
   const whatsappUrl = getWhatsAppUrl(ASSISTANT_WHATSAPP_MESSAGE);
+
+  const closeConversation = (reason) => {
+    const id = conversationRef.current;
+    if (!id) return;
+    const body = JSON.stringify({
+      session_id: getSessionId(),
+      conversation_id: id,
+      reason,
+    });
+    const url = getApiUrl('/chat/close');
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+    } else {
+      fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
+    }
+  };
+
+  const resetInactivity = () => {
+    window.clearTimeout(inactivityRef.current);
+    inactivityRef.current = window.setTimeout(() => closeConversation('inactivity'), INACTIVITY_MS);
+  };
 
   useEffect(() => {
     if (!open) return undefined;
-
     const onKey = (event) => {
       if (event.key === 'Escape') setOpen(false);
     };
-
     window.addEventListener('keydown', onKey);
     closeRef.current?.focus();
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
   useEffect(() => {
-    if (open) {
-      inputRef.current?.focus();
-    }
+    if (open) inputRef.current?.focus();
   }, [open]);
 
   useEffect(() => {
@@ -40,6 +87,15 @@ export default function AssistantWidget() {
     if (!thread) return;
     thread.scrollTop = thread.scrollHeight;
   }, [messages, sending, open]);
+
+  useEffect(() => {
+    const onLeave = () => closeConversation('page_leave');
+    window.addEventListener('pagehide', onLeave);
+    return () => {
+      window.clearTimeout(inactivityRef.current);
+      window.removeEventListener('pagehide', onLeave);
+    };
+  }, []);
 
   const sendMessage = async (event) => {
     event.preventDefault();
@@ -50,29 +106,35 @@ export default function AssistantWidget() {
     setMessages((current) => [...current, userMessage]);
     setInput('');
     setSending(true);
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent('ChatStart');
+    }
 
     try {
-      const response = await fetch(getAgentChatUrl(), {
+      const response = await fetch(getApiUrl('/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          session_id: getSessionId(),
+          conversation_id: conversationId,
+        }),
       });
-
-      let data = {};
-      try {
-        data = await response.json();
-      } catch {
-        data = {};
-      }
-
+      const data = await response.json().catch(() => ({}));
       if (!response.ok || typeof data.response !== 'string' || !data.response.trim()) {
         throw new Error(data.error || USER_ERROR_MESSAGE);
       }
-
+      if (data.conversation_id) {
+        setConversationId(data.conversation_id);
+        conversationRef.current = data.conversation_id;
+      }
       setMessages((current) => [
         ...current,
         { id: `assistant-${Date.now()}`, role: 'assistant', text: data.response.trim() },
       ]);
+      trackEvent('ChatAttended');
+      resetInactivity();
     } catch {
       setMessages((current) => [
         ...current,
@@ -114,7 +176,10 @@ export default function AssistantWidget() {
               ref={closeRef}
               type="button"
               className="assistant-panel__close"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                closeConversation('visitor_closed');
+                setOpen(false);
+              }}
               aria-label="Cerrar asistente"
             >
               <i className="bi bi-x-lg" aria-hidden="true" />
@@ -123,20 +188,13 @@ export default function AssistantWidget() {
 
           <div className="assistant-panel__body" ref={threadRef}>
             {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`assistant-bubble assistant-bubble--${message.role}`}
-              >
-                <p>{message.text}</p>
+              <div key={message.id} className={`assistant-bubble assistant-bubble--${message.role}`}>
+                <p>{renderText(message.text)}</p>
               </div>
             ))}
             {sending ? (
               <div className="assistant-bubble assistant-bubble--assistant" aria-live="polite">
-                <p className="assistant-typing">
-                  <span />
-                  <span />
-                  <span />
-                </p>
+                <p className="assistant-typing"><span /><span /><span /></p>
               </div>
             ) : null}
           </div>
@@ -163,15 +221,12 @@ export default function AssistantWidget() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent('WhatsAppClick', { place: 'chat' })}
               >
                 <i className="bi bi-whatsapp" aria-hidden="true" />
                 WhatsApp
               </a>
-              <button
-                type="submit"
-                className="assistant-action assistant-action--primary"
-                disabled={sending || !input.trim()}
-              >
+              <button type="submit" className="assistant-action assistant-action--primary" disabled={sending || !input.trim()}>
                 Enviar
               </button>
             </div>
@@ -185,7 +240,11 @@ export default function AssistantWidget() {
         aria-expanded={open}
         aria-controls={panelId}
         aria-label={open ? 'Cerrar asistente NOVAHost' : 'Abrir asistente NOVAHost'}
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          const next = !open;
+          setOpen(next);
+          if (next) trackEvent('ChatOpen');
+        }}
       >
         <i className={`bi ${open ? 'bi-x-lg' : 'bi-chat-dots-fill'}`} aria-hidden="true" />
       </button>

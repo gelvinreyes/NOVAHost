@@ -924,6 +924,7 @@ main,
 }
 
 .form-field input,
+.form-field select,
 .form-field textarea {
   width: 100%;
   border: 1px solid var(--line);
@@ -934,6 +935,7 @@ main,
 }
 
 .form-field input:focus,
+.form-field select:focus,
 .form-field textarea:focus {
   border-color: var(--color-primary);
   outline: none;
@@ -1575,4 +1577,135 @@ main,
   font-size: 0.82rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+#oferta,
+#soluciones,
+#como-funciona,
+#faq,
+#contacto-landing,
+#demos {
+  scroll-margin-top: calc(var(--header-h) + 0.75rem);
+}
+
+.hero-price {
+  margin: 0.8rem 0 0.2rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--color-primary);
+}
+
+.hero-price__note {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+.offer-block .hero__actions,
+.contact-form {
+  margin-top: 1.2rem;
+}
+
+.nova-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.nova-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 10, 24, 0.7);
+}
+
+.nova-card__media img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.nova-card__body {
+  padding: 1.2rem 1.3rem 1.4rem;
+}
+
+.nova-card__body ul {
+  margin: 0.8rem 0 1rem;
+  padding-left: 1.1rem;
+  color: var(--text-muted);
+}
+
+.landing-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.landing-steps li {
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(0, 10, 24, 0.7);
+}
+
+.landing-steps strong {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.7rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #001018;
+}
+
+.faq-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.faq-item {
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1.1rem;
+  background: rgba(0, 10, 24, 0.7);
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.faq-item p {
+  margin: 0.7rem 0 0;
+  color: var(--text-muted);
+}
+
+.form-field--check label {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.form-ok {
+  color: #3ee0a0;
+}
+
+.contact-form .btn + .btn,
+.contact-form a.btn {
+  margin-top: 0.7rem;
+}
+
+.assistant-bubble a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .nova-grid,
+  .landing-steps {
+    grid-template-columns: 1fr;
+  }
 }

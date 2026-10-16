@@ -28,7 +28,11 @@ npm run dev
 
 ## Agente IA
 
-El widget llama a `/api/chat` en el mismo dominio (`https://novahost.com.gt/api/chat`). No hace falta `VITE_AGENT_API_URL` en producción si el agente está montado en `/api`.
+El widget llama a `/api/chat` en el mismo dominio. El formulario de contacto usa `/api/contact`. No hace falta `VITE_AGENT_API_URL` en producción si el agente está montado en `/api`.
+
+La oferta Q599 de octubre 2026 se configura en `src/config/siteConfig.js` (`webOffer`). Al vencer, el sitio muestra Q1,199.
+
+Productos NOVA (NovaFinanzas, NovaFit) se editan en `siteConfig.novaProducts`.
 
 Opcional, para forzar otra URL:
 

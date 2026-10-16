@@ -8,13 +8,16 @@ import Productos from './pages/Productos';
 import Servicios from './pages/Servicios';
 import Porque from './pages/Porque';
 import Contacto from './pages/Contacto';
+import Privacidad from './pages/Privacidad';
 import NotFound from './pages/NotFound';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
     if (typeof window.fbq === 'function') {
       window.fbq('track', 'PageView');
     }
@@ -35,6 +38,7 @@ export default function App() {
           <Route path="/servicios" element={<Servicios />} />
           <Route path="/porque" element={<Porque />} />
           <Route path="/contacto" element={<Contacto />} />
+          <Route path="/privacidad" element={<Privacidad />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

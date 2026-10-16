@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="620" viewBox="0 0 960 620" role="img" aria-labelledby="title desc">
+<title id="title">Concepto visual provisional de NovaFit</title>
+<desc id="desc">Ilustración conceptual de una aplicación de entrenamiento con resumen semanal y sesiones. No es una captura real de la aplicación.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0f7e8"/><stop offset="1" stop-color="#e7f0f2"/></linearGradient></defs>
+<rect width="960" height="620" rx="32" fill="url(#bg)"/>
+<rect x="58" y="48" width="844" height="524" rx="24" fill="#fff" stroke="#dce5e0" stroke-width="2"/>
+<rect x="58" y="48" width="844" height="68" rx="24" fill="#243f2b"/><rect x="58" y="90" width="844" height="26" fill="#243f2b"/>
+<circle cx="94" cy="82" r="9" fill="#b9e46b"/><text x="119" y="90" font-family="Arial,sans-serif" font-size="25" font-weight="700" fill="#fff">NovaFit</text>
+<text x="92" y="157" font-family="Arial,sans-serif" font-size="17" fill="#6b7a6a">VISTA CONCEPTUAL · DATOS ILUSTRATIVOS</text>
+<text x="92" y="198" font-family="Arial,sans-serif" font-size="28" font-weight="700" fill="#233d2a">Tu progreso, paso a paso</text>
+<rect x="92" y="222" width="500" height="308" rx="16" fill="#fff" stroke="#e1e8e1"/>
+<text x="118" y="260" font-family="Arial,sans-serif" font-size="19" font-weight="700" fill="#263e2b">Actividad semanal</text>
+<text x="118" y="286" font-family="Arial,sans-serif" font-size="14" fill="#748176">Sesiones registradas · ejemplo visual</text>
+<path d="M132 466 H554 M132 416 H554 M132 366 H554 M132 316 H554" stroke="#e9eee8" stroke-width="2"/>
+<rect x="160" y="398" width="38" height="68" rx="7" fill="#82b65d"/><rect x="222" y="356" width="38" height="110" rx="7" fill="#82b65d"/><rect x="284" y="378" width="38" height="88" rx="7" fill="#82b65d"/><rect x="346" y="328" width="38" height="138" rx="7" fill="#82b65d"/><rect x="408" y="367" width="38" height="99" rx="7" fill="#82b65d"/><rect x="470" y="340" width="38" height="126" rx="7" fill="#82b65d"/>
+<text x="160" y="493" font-family="Arial,sans-serif" font-size="13" fill="#657368">L</text><text x="222" y="493" font-family="Arial,sans-serif" font-size="13" fill="#657368">M</text><text x="284" y="493" font-family="Arial,sans-serif" font-size="13" fill="#657368">X</text><text x="346" y="493" font-family="Arial,sans-serif" font-size="13" fill="#657368">J</text><text x="408" y="493" font-family="Arial,sans-serif" font-size="13" fill="#657368">V</text><text x="470" y="493" font-family="Arial,sans-serif" font-size="13" fill="#657368">S</text>
+<rect x="614" y="222" width="254" height="146" rx="16" fill="#f1f7eb" stroke="#dce9d0"/>
+<text x="638" y="258" font-family="Arial,sans-serif" font-size="16" fill="#61745a">Próxima sesión</text><text x="638" y="294" font-family="Arial,sans-serif" font-size="23" font-weight="700" fill="#2c4d31">Fuerza</text><text x="638" y="324" font-family="Arial,sans-serif" font-size="15" fill="#6a7d62">Planifica y registra</text>
+<rect x="614" y="386" width="254" height="144" rx="16" fill="#fff" stroke="#e1e8e1"/>
+<text x="638" y="422" font-family="Arial,sans-serif" font-size="19" font-weight="700" fill="#263e2b">Objetivos</text>
+<circle cx="654" cy="458" r="9" fill="#7fb45b"/><text x="674" y="464" font-family="Arial,sans-serif" font-size="15" fill="#536a56">Entrenar con constancia</text>
+<circle cx="654" cy="492" r="9" fill="#7fb45b"/><text x="674" y="498" font-family="Arial,sans-serif" font-size="15" fill="#536a56">Observar tu evolución</text>
+</svg>

@@ -4,28 +4,36 @@ import siteConfig from '../config/siteConfig';
 import Seo from '../components/Seo';
 import Hero from '../components/Hero';
 import Reveal from '../components/Reveal';
-import ProductCard from '../components/ProductCard';
+import NovaProductCard from '../components/NovaProductCard';
+import ContactForm from '../components/ContactForm';
 import CtaBanner from '../components/CtaBanner';
-
-const marqueeItems = [
-  'Hosting',
-  'Dominios',
-  'Correo corporativo',
-  'SSL',
-  'Sitios web',
-  'Respaldo',
-  'Soporte en Guatemala',
-  'Presencia digital',
-];
+import { getActiveOffer } from '../utils/webOffer';
+import { getWhatsAppUrl } from '../utils/whatsapp';
+import { trackEvent } from '../utils/analytics';
 
 export default function Home() {
-  const { home, specialties, experience, gallery, hostingHighlights } = siteConfig;
+  const { home, gallery } = siteConfig;
   const location = useLocation();
+  const offer = getActiveOffer();
+  const products = [...siteConfig.novaProducts]
+    .filter((item) => item.published)
+    .sort((a, b) => a.order - b.order);
+
+  const faqs = siteConfig.faqs.map((item, index) => {
+    if (index !== 0) return item;
+    return {
+      ...item,
+      a: offer.isPromo
+        ? `Incluye página web profesional basada en plantilla, hosting, dominio y 1 correo profesional, con actualizaciones menores de contenido según el paquete anual. Precio promocional ${offer.priceLabel} al año hasta el ${offer.endDate}. Consulta condiciones al cotizar.`
+        : `Incluye página web profesional basada en plantilla, hosting, dominio y 1 correo profesional, con actualizaciones menores de contenido según el paquete anual. Precio de referencia ${offer.priceLabel} al año. Consulta condiciones al cotizar.`,
+    };
+  });
 
   useEffect(() => {
-    if (location.hash !== '#demos') return undefined;
+    const id = location.hash.replace('#', '');
+    if (!id) return undefined;
     const timer = window.setTimeout(() => {
-      document.getElementById('demos')?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     }, 80);
     return () => window.clearTimeout(timer);
   }, [location.hash, location.pathname]);
@@ -34,114 +42,91 @@ export default function Home() {
     <>
       <Seo
         title="Inicio"
-        description={siteConfig.seo.defaultDescription}
+        description="Páginas web, hosting y soluciones NOVA: NovaFinanzas Personales y NovaFit. Presencia digital para negocios en Guatemala."
         path="/"
         image={siteConfig.heroImage}
       />
       <Hero />
 
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[...marqueeItems, ...marqueeItems].map((item, index) => (
-            <span key={`${item}-${index}`}>{item}</span>
-          ))}
-        </div>
-      </div>
-
-      <section className="section split-section">
-        <div className="container-wide split-section__grid">
+      <section className="section" id="oferta">
+        <div className="container-wide offer-block">
           <Reveal>
-            <p className="eyebrow">Bienvenidos</p>
-            <h2>{home.presentationTitle}</h2>
-            <p className="lead">{home.presentationText}</p>
-            <Link className="btn btn-gold" to="/quienes-somos">Conócenos</Link>
-          </Reveal>
-          <Reveal className="split-section__media" delay={120}>
-            <img
-              src={home.presentationImage}
-              alt="Hosting NOVAHost para negocios en Guatemala"
-              loading="lazy"
-              decoding="async"
-            />
-          </Reveal>
-        </div>
-      </section>
-
-      {home.stats?.length ? (
-        <section className="section section--stats">
-          <div className="container-wide stats-grid">
-            {home.stats.map((stat, index) => (
-              <Reveal key={stat.label} className="stat-item" delay={index * 70}>
-                <strong>{stat.value}</strong>
-                <span>{stat.label}</span>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      <section className="section">
-        <div className="container-wide">
-          <Reveal className="section-heading">
-            <p className="eyebrow">{home.specialtiesEyebrow}</p>
-            <h2>{home.specialtiesTitle}</h2>
-            <p>{home.specialtiesIntro}</p>
-          </Reveal>
-          <div className="specialties-grid">
-            {specialties.map((item, index) => (
-              <Reveal key={item.id} delay={index * 80}>
-                <ProductCard item={item} ctaLabel="Más información" to="/productos" />
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--glass">
-        <div className="container-wide highlight-panel">
-          <Reveal>
-            <p className="eyebrow">Todo lo que tu negocio necesita</p>
-            <h2>Hosting pensado para emprendedores</h2>
-            <p className="lead">
-              Servidores de alto rendimiento con atención y soporte para Guatemala.
-              Tu web siempre disponible para tus clientes.
-            </p>
+            <p className="eyebrow">¿Qué incluye?</p>
+            <h2>Paquete web desde {offer.priceLabel} {offer.periodLabel}</h2>
+            <p className="lead">{offer.headline}</p>
             <ul className="check-list">
-              {hostingHighlights.map((item) => (
+              {offer.includes.map((item) => (
                 <li key={item}>
                   <i className="bi bi-check-circle-fill" aria-hidden="true" /> {item}
                 </li>
               ))}
             </ul>
-            <p className="tiny-note">*Aplican restricciones. Confirmamos condiciones al cotizar.</p>
-            <Link className="btn btn-gold" to="/productos">Ver productos</Link>
-          </Reveal>
-          <Reveal delay={100} className="split-section__media">
-            <img
-              src="/images/marketing/solucion-completa.png"
-              alt="Solución completa NOVAHost"
-              loading="lazy"
-              decoding="async"
-            />
+            <p className="tiny-note">{offer.legal}</p>
+            <div className="hero__actions">
+              <a
+                className="btn btn-gold"
+                href={getWhatsAppUrl(siteConfig.whatsappPackageMessage)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('WhatsAppClick', { place: 'offer' })}
+              >
+                Consultar disponibilidad
+              </a>
+              <Link className="btn btn-ghost" to="/#soluciones">Explorar soluciones</Link>
+            </div>
           </Reveal>
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section--glass" id="soluciones">
         <div className="container-wide">
           <Reveal className="section-heading">
-            <p className="eyebrow">{home.experienceEyebrow}</p>
-            <h2>{home.experienceTitle}</h2>
+            <p className="eyebrow">Soluciones NOVA</p>
+            <h2>También creamos herramientas para tu día a día.</h2>
+            <p>
+              Además de impulsar negocios en internet, desarrollamos soluciones digitales
+              para organizar mejor distintas áreas de tu vida. No están incluidas en el
+              paquete de hosting.
+            </p>
           </Reveal>
-          <div className="experience-grid">
-            {experience.map((item, index) => (
-              <Reveal key={item.title} className="experience-item" delay={index * 70}>
-                <i className={`bi ${item.icon}`} aria-hidden="true" />
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
+          <div className="nova-grid">
+            {products.map((product) => (
+              <Reveal key={product.slug}>
+                <NovaProductCard product={product} />
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="section" id="como-funciona">
+        <div className="container-wide">
+          <Reveal className="section-heading">
+            <p className="eyebrow">Así de fácil</p>
+            <h2>Tres pasos para empezar</h2>
+          </Reveal>
+          <ol className="landing-steps">
+            {siteConfig.howItWorks.map((step, index) => (
+              <li key={step}>
+                <strong>{index + 1}</strong>
+                <p>{step}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="section section--glass">
+        <div className="container-wide">
+          <Reveal className="section-heading">
+            <p className="eyebrow">Confianza</p>
+            <h2>Qué ocurre después de escribirnos</h2>
+            <p className="lead">
+              Te orientamos en español sobre hosting, tu página web o las soluciones NOVA.
+              No pedimos contraseñas ni datos bancarios. Si quieres seguimiento por correo,
+              te lo preguntamos y solo lo hacemos con tu autorización.
+            </p>
+          </Reveal>
         </div>
       </section>
 
@@ -162,18 +147,30 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section events-teaser">
-        <div className="container-wide events-teaser__content">
+      <section className="section" id="faq">
+        <div className="container-narrow">
+          <Reveal className="section-heading">
+            <p className="eyebrow">Preguntas frecuentes</p>
+            <h2>Respuestas claras</h2>
+          </Reveal>
+          <div className="faq-list">
+            {faqs.map((item) => (
+              <details key={item.q} className="faq-item">
+                <summary>{item.q}</summary>
+                <p>{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--glass" id="contacto-landing">
+        <div className="container-narrow">
           <Reveal>
-            <p className="eyebrow">{home.eventsEyebrow}</p>
-            <h2>{home.eventsTitle}</h2>
-            <p className="lead">{home.eventsIntro}</p>
-            <ul className="event-pills">
-              {home.eventPills.map((pill) => (
-                <li key={pill}>{pill}</li>
-              ))}
-            </ul>
-            <Link className="btn btn-gold" to="/servicios">Conoce nuestras soluciones</Link>
+            <p className="eyebrow">Contacto</p>
+            <h2>Cuéntanos qué necesitas</h2>
+            <p>{siteConfig.contact.formText}</p>
+            <ContactForm />
           </Reveal>
         </div>
       </section>
