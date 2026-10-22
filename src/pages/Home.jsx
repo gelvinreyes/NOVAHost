@@ -46,13 +46,31 @@ export default function Home() {
           </Reveal>
           <div className="choice-grid">
             <Link className="choice-card" to="/#hosting" onClick={() => trackEvent('HostingClick')}>
-              <i className="bi bi-hdd-network" aria-hidden="true" />
+              <div className="choice-card__media">
+                <img
+                  src="/images/choices/hosting.jpg"
+                  alt="Centro de datos y servidores para hosting web"
+                  width="960"
+                  height="540"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
               <h3>Hosting</h3>
               <p>Mantén tu sitio en línea, estable y con soporte cercano.</p>
               <span>Ver hosting</span>
             </Link>
             <Link className="choice-card" to="/#paginas-web" onClick={() => trackEvent('PaginaWebClick')}>
-              <i className="bi bi-window" aria-hidden="true" />
+              <div className="choice-card__media">
+                <img
+                  src="/images/choices/pagina-web.jpg"
+                  alt="Sitio web empresarial visto en computadora y teléfono"
+                  width="960"
+                  height="540"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
               <h3>Página web</h3>
               <p>Presencia profesional para tu negocio, con paquete anual.</p>
               <span>Ver páginas web</span>
@@ -64,7 +82,16 @@ export default function Home() {
               rel="noopener noreferrer"
               onClick={() => trackEvent('NovaFitClick')}
             >
-              <i className="bi bi-heart-pulse" aria-hidden="true" />
+              <div className="choice-card__media">
+                <img
+                  src="/images/choices/novafit.jpg"
+                  alt="Pantalla de NovaFit con racha, récord y actividad semanal"
+                  width="960"
+                  height="540"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
               <h3>NovaFit</h3>
               <p>Registra entrenamientos y sigue tu progreso. Producto aparte del hosting.</p>
               <span>Ir a NovaFit</span>
@@ -76,7 +103,16 @@ export default function Home() {
               rel="noopener noreferrer"
               onClick={() => trackEvent('NovaFinanzasClick')}
             >
-              <i className="bi bi-wallet2" aria-hidden="true" />
+              <div className="choice-card__media">
+                <img
+                  src="/images/choices/novafinanzas.jpg"
+                  alt="Inicio de NovaFinanzas Personales con presupuesto y resumen de cuentas"
+                  width="960"
+                  height="540"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
               <h3>NovaFinanzas Personales</h3>
               <p>Organiza ingresos, gastos y deudas. Producto aparte del hosting.</p>
               <span>Ir a NovaFinanzas</span>
