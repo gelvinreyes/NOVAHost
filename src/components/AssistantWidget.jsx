@@ -8,6 +8,7 @@ const USER_ERROR_MESSAGE = 'No pude conectar con el asistente. Inténtalo de nue
 const SERVICE_DOWN_MESSAGE =
   'El asistente no está disponible en este momento. Puedes escribirnos por WhatsApp.';
 const SESSION_KEY = 'novahost_assistant_session';
+const HUMAN_INTENT = /asesor|humano|whatsapp|comprar|contratar|cotiz|hablar con alguien|quiero que me contact/i;
 
 function getSessionId() {
   const existing = sessionStorage.getItem(SESSION_KEY);
@@ -30,6 +31,9 @@ export default function AssistantWidget() {
   const threadRef = useRef(null);
   const conversationRef = useRef(null);
   const whatsappUrl = getWhatsAppUrl(ASSISTANT_WHATSAPP_MESSAGE);
+  const [offerHuman, setOfferHuman] = useState(false);
+  const [shareTranscript, setShareTranscript] = useState(false);
+  const [handoffBusy, setHandoffBusy] = useState(false);
 
   const closeConversation = (reason) => {
     const id = conversationRef.current;
@@ -99,6 +103,7 @@ export default function AssistantWidget() {
         throw new Error(data.error || USER_ERROR_MESSAGE);
       }
       if (data.conversation_id) conversationRef.current = data.conversation_id;
+      if (HUMAN_INTENT.test(text)) setOfferHuman(true);
       trackEvent('ChatAttended');
       setMessages((current) => [
         ...current,
@@ -112,6 +117,43 @@ export default function AssistantWidget() {
       ]);
     } finally {
       setSending(false);
+    }
+  };
+
+  const requestHuman = async (withTranscript) => {
+    setHandoffBusy(true);
+    try {
+      if (!conversationRef.current) {
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+      const response = await fetch(getApiUrl('/chat/handoff'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversationRef.current,
+          session_id: getSessionId(),
+          shareTranscript: withTranscript,
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      const url = data.whatsappUrl || whatsappUrl;
+      window.open(url, '_blank', 'noopener,noreferrer');
+      trackEvent('WhatsAppClick', { place: 'handoff' });
+      setMessages((current) => [
+        ...current,
+        {
+          id: `handoff-${Date.now()}`,
+          role: 'assistant',
+          text: withTranscript
+            ? 'Abrí WhatsApp con un resumen autorizado. El envío lo completas tú; si el correo interno está activo, el asesor también recibe el detalle.'
+            : 'Abrí WhatsApp sin compartir el historial. Puedes escribirle al asesor cuando quieras.',
+        },
+      ]);
+    } catch {
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    } finally {
+      setHandoffBusy(false);
     }
   };
 
@@ -192,13 +234,37 @@ export default function AssistantWidget() {
               placeholder="Escribe tu pregunta..."
               maxLength={2000}
             />
+            {offerHuman ? (
+              <div className="assistant-handoff">
+                <p>¿Quieres hablar con un asesor humano por WhatsApp?</p>
+                <label className="assistant-handoff__consent">
+                  <input
+                    type="checkbox"
+                    checked={shareTranscript}
+                    onChange={(event) => setShareTranscript(event.target.checked)}
+                  />
+                  Autorizo incluir un resumen de esta conversación para el asesor.
+                </label>
+                <button
+                  type="button"
+                  className="assistant-action assistant-action--whatsapp"
+                  disabled={handoffBusy}
+                  onClick={() => requestHuman(shareTranscript)}
+                >
+                  Sí, contactar asesor
+                </button>
+              </div>
+            ) : null}
             <div className="assistant-form__row">
               <a
                 className="assistant-action assistant-action--whatsapp"
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackEvent('WhatsAppClick', { place: 'chat' })}
+                onClick={() => {
+                  setOfferHuman(true);
+                  trackEvent('WhatsAppClick', { place: 'chat' });
+                }}
               >
                 <i className="bi bi-whatsapp" aria-hidden="true" />
                 WhatsApp
@@ -209,6 +275,13 @@ export default function AssistantWidget() {
                 disabled={sending || !input.trim()}
               >
                 Enviar
+              </button>
+              <button
+                type="button"
+                className="assistant-action"
+                onClick={() => setOfferHuman(true)}
+              >
+                Hablar con un asesor
               </button>
             </div>
           </form>
@@ -224,7 +297,10 @@ export default function AssistantWidget() {
         onClick={() => {
           setOpen((value) => {
             const next = !value;
-            if (next) trackEvent('ChatOpen');
+            if (next) {
+              trackEvent('ChatOpen');
+              setOfferHuman(false);
+            }
             return next;
           });
         }}

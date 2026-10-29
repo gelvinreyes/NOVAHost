@@ -21,6 +21,9 @@ export default function Privacidad() {
           <p>
             Si dejas tu nombre, correo o mensaje, NOVAHost los usa para responderte y,
             si lo autorizas, para un seguimiento relacionado con esa consulta.
+            El asistente puede guardar la conversación en el servidor de NOVAHost para
+            continuidad comercial. Si pides un asesor humano, el resumen solo se comparte
+            cuando tú lo autorizas.
           </p>
           <p>
             No pedimos contraseñas, datos bancarios ni información financiera detallada.

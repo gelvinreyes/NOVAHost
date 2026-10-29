@@ -1,5 +1,6 @@
 import siteConfig from '../config/siteConfig';
 import { guatemalaDateISO } from './guatemalaTime';
+import { formatPrice } from './format';
 
 export function getActiveOffer(offer = siteConfig.webOffer) {
   const today = guatemalaDateISO();
@@ -15,7 +16,7 @@ export function getActiveOffer(offer = siteConfig.webOffer) {
     ...offer,
     isPromo,
     price,
-    priceLabel: `Q${price.toLocaleString('es-GT')}`,
+    priceLabel: formatPrice(price),
     legal: isPromo ? offer.promoLegal : offer.regularLegal,
   };
 }

@@ -16,7 +16,7 @@ export default function Hero() {
         <p className="eyebrow">Guatemala · Hosting y presencia digital</p>
         <h1>{siteConfig.heroTitle}</h1>
         <p className="hero__lead">{siteConfig.heroLead}</p>
-        <p className="hero-price">Paquete web desde {offer.priceLabel} al año</p>
+        <p className="hero-price">Landing page desde {offer.priceLabel}</p>
         <p className="hero-price__note">{offer.headline}</p>
         <div className="hero__actions">
           <Link className="btn btn-gold" to={siteConfig.heroPrimaryLink}>{siteConfig.heroPrimaryCta}</Link>

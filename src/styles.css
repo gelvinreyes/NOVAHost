@@ -539,6 +539,14 @@ main,
   margin-top: 0.2rem;
 }
 
+.check-list--muted li {
+  color: var(--muted);
+}
+
+.check-list--muted i {
+  color: #f0a8a8;
+}
+
 .tiny-note {
   color: var(--muted);
   font-size: 0.82rem;
@@ -1234,6 +1242,31 @@ main,
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
+}
+
+.assistant-form__row .assistant-action:last-child {
+  grid-column: 1 / -1;
+}
+
+.assistant-handoff {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: rgba(0, 20, 48, 0.45);
+  font-size: 0.82rem;
+}
+
+.assistant-handoff p {
+  margin: 0;
+}
+
+.assistant-handoff__consent {
+  display: flex;
+  gap: 0.45rem;
+  align-items: flex-start;
+  color: var(--muted);
 }
 
 .assistant-visually-hidden {

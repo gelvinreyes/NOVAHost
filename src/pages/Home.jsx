@@ -72,7 +72,7 @@ export default function Home() {
                 />
               </div>
               <h3>Página web</h3>
-              <p>Presencia profesional para tu negocio, con paquete anual.</p>
+              <p>Landing page profesional basada en plantilla, desde Q399.99.</p>
               <span>Ver páginas web</span>
             </Link>
             <a
@@ -158,7 +158,7 @@ export default function Home() {
         <div className="container-wide offer-block">
           <Reveal>
             <p className="eyebrow">Página web</p>
-            <h2>Paquete web desde {offer.priceLabel} al año</h2>
+            <h2>Página web básica desde {offer.priceLabel}</h2>
             <p className="lead">{offer.headline}</p>
             <ul className="check-list">
               {offer.includes.map((item) => (
@@ -167,6 +167,15 @@ export default function Home() {
                 </li>
               ))}
             </ul>
+            {offer.excludes?.length ? (
+              <ul className="check-list check-list--muted">
+                {offer.excludes.map((item) => (
+                  <li key={item}>
+                    <i className="bi bi-x-circle" aria-hidden="true" /> {item}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <p className="tiny-note">{offer.legal}</p>
             <div className="hero__actions">
               <a

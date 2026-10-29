@@ -9,6 +9,7 @@ import Servicios from './pages/Servicios';
 import Porque from './pages/Porque';
 import Contacto from './pages/Contacto';
 import Privacidad from './pages/Privacidad';
+import Panel from './pages/Panel';
 import NotFound from './pages/NotFound';
 
 function ScrollToTop() {
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/porque" element={<Porque />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/privacidad" element={<Privacidad />} />
+          <Route path="/panel" element={<Panel />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

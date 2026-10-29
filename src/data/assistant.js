@@ -10,7 +10,7 @@ export const ASSISTANT_CONFIG = {
   title: 'Asistente NOVAHost',
   status: 'En línea',
   welcome:
-    'Hola, soy el asistente virtual de NOVAHost. ¿Buscas hosting, una página web para tu negocio, organizar tus finanzas personales o llevar el control de tus entrenamientos?',
+    'Hola, soy el asistente virtual de NOVAHost. El plan básico es una landing page desde Q399.99, basada en plantilla y sin correo corporativo. ¿Buscas esa página, hosting, NovaFinanzas o NovaFit?',
 };
 
 export function getAgentChatUrl() {

@@ -53,7 +53,7 @@ const siteConfig = {
   whatsappEmailMessage:
     'Hola NOVAHost, quiero un correo corporativo con el nombre de mi marca.',
   whatsappPackageMessage:
-    'Hola NOVAHost, me interesa la solución completa de sitio web, hosting, dominio y correo.',
+    'Hola NOVAHost, me interesa la landing page básica desde Q399.99.',
 
   navItems: [
     { to: '/#hosting', label: 'Hosting' },
@@ -75,25 +75,31 @@ const siteConfig = {
   heroPrimaryLink: '/#paginas-web',
   heroTitle: 'Tu negocio merece una presencia digital propia.',
   heroLead:
-    'Creamos tu página web y te ayudamos a dar el siguiente paso con dominio, hosting y correo profesional en un solo paquete.',
+    'Landing page profesional basada en plantilla, adaptada a tu negocio. Hosting, dominio y correo se cotizan aparte si los necesitas.',
 
   webOffer: {
-    enabled: true,
-    promoPrice: 599,
-    regularPrice: 1199,
-    startDate: '2026-10-01',
-    endDate: '2026-10-31',
-    headline: 'Página web profesional + hosting + dominio + 1 correo',
+    enabled: false,
+    promoPrice: 399.99,
+    regularPrice: 399.99,
+    startDate: '',
+    endDate: '',
+    headline: 'Landing page profesional basada en template',
     promoLegal:
-      'Oferta de octubre de 2026. Precio promocional Q599 al año mientras esté vigente. Consulta condiciones al cotizar. No incluye diseño a medida ni NovaFit o NovaFinanzas.',
+      'Desde Q399.99. Landing page basada en plantilla. No incluye correo corporativo ni desarrollo a medida. Hosting y dominio se confirman con un asesor.',
     regularLegal:
-      'Precio de referencia Q1,199 al año. Aplican restricciones; confirma vigencia al cotizar. No incluye diseño a medida ni NovaFit o NovaFinanzas.',
+      'Desde Q399.99. Landing page basada en plantilla. No incluye correo corporativo ni desarrollo a medida. Hosting, dominio y periodicidad se confirman con un asesor.',
     includes: [
-      'Página web profesional basada en una plantilla',
-      'Hosting para publicar tu sitio',
-      'Dominio para tu marca',
-      '1 correo profesional',
-      'Hasta 12 actualizaciones menores de contenido al año',
+      'Landing page profesional basada en una plantilla (no es diseño a medida)',
+      'Información de la empresa y sección Nosotros',
+      'Productos o servicios con fotografías',
+      'Contacto con WhatsApp y redes sociales',
+      'Logotipo y paleta de colores que nos facilites',
+      'Fotografías correspondientes al negocio',
+      'Diseño responsivo para celular, tableta y computadora',
+    ],
+    excludes: [
+      'No incluye correo corporativo',
+      'No incluye desarrollo a medida desde cero',
     ],
   },
 
@@ -142,16 +148,16 @@ const siteConfig = {
 
   faqs: [
     {
-      q: '¿Qué incluye el paquete web?',
-      a: 'Página web profesional basada en plantilla, hosting, dominio y 1 correo profesional, con actualizaciones menores de contenido según el paquete anual.',
+      q: '¿Qué incluye el plan básico de Q399.99?',
+      a: 'Una landing page profesional basada en plantilla: información de la empresa, Nosotros, productos o servicios con fotos, contacto por WhatsApp y redes, logotipo y colores que nos facilites, y diseño responsivo. No es un desarrollo a medida.',
     },
     {
-      q: '¿El dominio y el correo están incluidos?',
-      a: 'Sí, en el paquete anunciado: 1 dominio y 1 correo profesional, según disponibilidad y condiciones vigentes al contratar.',
+      q: '¿Incluye correo corporativo, hosting o dominio?',
+      a: 'El plan básico no incluye correo corporativo. Hosting, dominio y la forma de cobro (por ejemplo si es anual) se confirman con un asesor; no están prometidos en el precio de Q399.99.',
     },
     {
       q: '¿Puedo pedir un diseño especial?',
-      a: 'Sí. Un diseño a medida o funciones fuera del paquete básico se cotizan por separado.',
+      a: 'Sí. Un diseño a medida o funciones fuera de la plantilla se cotizan por separado, sin un precio fijo en esta página.',
     },
     {
       q: '¿NovaFit o NovaFinanzas vienen con el hosting?',
@@ -170,7 +176,7 @@ const siteConfig = {
   seo: {
     defaultTitle: 'NOVAHost | Tu negocio, siempre en línea',
     defaultDescription:
-      'Hosting, páginas web y soluciones NOVA para negocios en Guatemala: NovaFinanzas Personales y NovaFit. Presencia digital con atención cercana.',
+      'Landing page profesional desde Q399.99, hosting y soluciones NOVA para negocios en Guatemala. Sin correo corporativo en el plan básico.',
   },
 
   home: {
@@ -318,10 +324,10 @@ const siteConfig = {
     },
     {
       id: 'solucion-completa',
-      name: 'Solución completa',
+      name: 'Landing page básica',
       description:
-        'Sitio web, dominio, hosting y correo profesional en un solo paquete para poner tu negocio en línea.',
-      price: 1199,
+        'Página de inicio profesional basada en plantilla, desde Q399.99. Sin correo corporativo. Hosting y dominio se cotizan aparte.',
+      price: 399.99,
       image: '/images/marketing/solucion-completa.png',
       category: 'paquetes',
     },
@@ -382,11 +388,20 @@ const siteConfig = {
       category: 'seguridad',
     },
     {
-      id: 'paquete-completo',
-      name: 'Solución completa anual',
+      id: 'landing-basica',
+      name: 'Página web básica (landing)',
       description:
-        'Sitio web profesional (5 páginas), dominio, hosting y 1 cuenta de correo corporativo. Precio de referencia Q1,199.00 al año. Aplican restricciones; confirma vigencia al cotizar.',
-      price: 1199,
+        'Landing page profesional basada en plantilla: empresa, Nosotros, productos o servicios con fotos, WhatsApp y redes, logo y colores del cliente, diseño responsivo. Desde Q399.99. No incluye correo corporativo ni desarrollo a medida. Hosting y dominio se cotizan aparte.',
+      price: 399.99,
+      image: '/images/marketing/solucion-completa.png',
+      category: 'paquetes',
+    },
+    {
+      id: 'paquete-completo',
+      name: 'Solución completa (cotización)',
+      description:
+        'Sitio más amplio, hosting, dominio y correo se cotizan por separado según tus necesidades. No es el plan básico de landing. Confirma vigencia y alcance al cotizar.',
+      price: null,
       image: '/images/marketing/solucion-completa.png',
       category: 'paquetes',
     },
